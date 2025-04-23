@@ -4,6 +4,8 @@ import org.example.academicresourcemanager.dto.RegisterStudentRequest;
 import org.example.academicresourcemanager.dto.RegisterTeacherRequest;
 import org.example.academicresourcemanager.dto.UserResponse;
 import org.example.academicresourcemanager.exception.UserNotFoundException;
+import org.example.academicresourcemanager.exception.UsernameAlreadyExistsException;
+import org.example.academicresourcemanager.exception.EmailAlreadyExistsException;
 import org.example.academicresourcemanager.model.Role;
 import org.example.academicresourcemanager.model.User;
 import org.example.academicresourcemanager.model.UserStatus;
@@ -40,11 +42,11 @@ public class UserService {
 
     public UserResponse createUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("Username is already taken");
+            throw new UsernameAlreadyExistsException("Username is already taken");
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Email is already in use");
+            throw new EmailAlreadyExistsException("Email is already in use");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -76,11 +78,11 @@ public class UserService {
 
     public UserResponse registerStudent(RegisterStudentRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username is already taken");
+            throw new UsernameAlreadyExistsException("Username is already taken");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email is already in use");
+            throw new EmailAlreadyExistsException("Email is already in use");
         }
 
         User user = new User();
@@ -100,11 +102,11 @@ public class UserService {
 
     public UserResponse registerTeacher(RegisterTeacherRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username is already taken");
+            throw new UsernameAlreadyExistsException("Username is already taken");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email is already in use");
+            throw new EmailAlreadyExistsException("Email is already in use");
         }
 
         User user = new User();

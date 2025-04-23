@@ -30,6 +30,12 @@ import {
 } from '@mui/icons-material';
 import { authService } from '../services/api';
 
+interface RegisterResponse {
+  data: {
+    message: string;
+  };
+}
+
 const Register: React.FC = () => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'));
@@ -49,12 +55,14 @@ const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name as string]: value,
     }));
+    // Clear error when user changes input
+    if (error) setError('');
   };
 
   const handleRoleChange = (event: any) => {
@@ -66,19 +74,32 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
-    
+    setLoading(true);
+
     try {
-      const response = await authService.register(formData);
+      const response = await authService.register({
+        username: formData.username,
+        password: formData.password,
+        email: formData.email,
+        role: formData.role,
+        fullName: formData.fullName,
+        ...(formData.role === 'STUDENT' ? { studentId: formData.studentId } : { department: formData.department }),
+      });
+
       if (response.data) {
-        setSuccess(true);
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
+        navigate('/login', { 
+          state: { 
+            message: 'Registration successful! Please login.',
+            type: 'success'
+          } 
+        });
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed');
+      console.error('Registration error:', err);
+      // Extract the error message from the response
+      const errorMessage = err.response?.data || err.message || 'Registration failed. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -92,29 +113,17 @@ const Register: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         bgcolor: 'background.default',
-        width: '100%',
         py: isDesktop ? 8 : isLaptop ? 6 : 4,
+        px: isDesktop ? 4 : isLaptop ? 3 : 2,
       }}
     >
-      <Container 
-        maxWidth="lg"
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100%',
-          px: isDesktop ? 4 : isLaptop ? 3 : 2,
-        }}
-      >
+      <Container maxWidth={isDesktop ? 'sm' : 'xs'}>
         <Paper
           elevation={3}
           sx={{
             p: isDesktop ? 6 : isLaptop ? 5 : 4,
             borderRadius: 2,
             background: 'linear-gradient(145deg, #ffffff, #f0f0f0)',
-            width: '100%',
-            maxWidth: isDesktop ? 500 : isLaptop ? 450 : 400,
-            mx: 'auto',
           }}
         >
           <Box sx={{ textAlign: 'center', mb: isDesktop ? 6 : isLaptop ? 5 : 4 }}>
@@ -129,12 +138,6 @@ const Register: React.FC = () => {
               variant={isDesktop ? 'h3' : isLaptop ? 'h4' : 'h5'} 
               component="h1" 
               gutterBottom
-              sx={{ 
-                fontWeight: 600,
-                background: 'linear-gradient(45deg, #1976d2 30%, #2196f3 90%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
             >
               Create Account
             </Typography>
@@ -184,7 +187,7 @@ const Register: React.FC = () => {
                 label="Full Name"
                 name="fullName"
                 value={formData.fullName}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -202,12 +205,6 @@ const Register: React.FC = () => {
                     borderRadius: 2,
                     fontSize: isDesktop ? '1.25rem' : isLaptop ? '1.1rem' : '1rem',
                     height: isDesktop ? '60px' : isLaptop ? '56px' : '48px',
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'primary.main',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderWidth: 2,
-                    },
                   },
                   '& .MuiInputLabel-root': {
                     fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
@@ -221,7 +218,7 @@ const Register: React.FC = () => {
                 name="email"
                 type="email"
                 value={formData.email}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -239,12 +236,6 @@ const Register: React.FC = () => {
                     borderRadius: 2,
                     fontSize: isDesktop ? '1.25rem' : isLaptop ? '1.1rem' : '1rem',
                     height: isDesktop ? '60px' : isLaptop ? '56px' : '48px',
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'primary.main',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderWidth: 2,
-                    },
                   },
                   '& .MuiInputLabel-root': {
                     fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
@@ -257,7 +248,7 @@ const Register: React.FC = () => {
                 label="Username"
                 name="username"
                 value={formData.username}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -275,12 +266,6 @@ const Register: React.FC = () => {
                     borderRadius: 2,
                     fontSize: isDesktop ? '1.25rem' : isLaptop ? '1.1rem' : '1rem',
                     height: isDesktop ? '60px' : isLaptop ? '56px' : '48px',
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'primary.main',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderWidth: 2,
-                    },
                   },
                   '& .MuiInputLabel-root': {
                     fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
@@ -294,7 +279,7 @@ const Register: React.FC = () => {
                 name="password"
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -323,12 +308,6 @@ const Register: React.FC = () => {
                     borderRadius: 2,
                     fontSize: isDesktop ? '1.25rem' : isLaptop ? '1.1rem' : '1rem',
                     height: isDesktop ? '60px' : isLaptop ? '56px' : '48px',
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'primary.main',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderWidth: 2,
-                    },
                   },
                   '& .MuiInputLabel-root': {
                     fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
@@ -352,12 +331,6 @@ const Register: React.FC = () => {
                     '& .MuiSelect-icon': {
                       fontSize: isDesktop ? '2rem' : isLaptop ? '1.75rem' : '1.5rem',
                     },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'primary.main',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderWidth: 2,
-                    },
                   }}
                 >
                   <MenuItem value="STUDENT">Student</MenuItem>
@@ -371,7 +344,7 @@ const Register: React.FC = () => {
                   label="Student ID"
                   name="studentId"
                   value={formData.studentId}
-                  onChange={handleInputChange}
+                  onChange={handleChange}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -389,12 +362,6 @@ const Register: React.FC = () => {
                       borderRadius: 2,
                       fontSize: isDesktop ? '1.25rem' : isLaptop ? '1.1rem' : '1rem',
                       height: isDesktop ? '60px' : isLaptop ? '56px' : '48px',
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: 'primary.main',
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderWidth: 2,
-                      },
                     },
                     '& .MuiInputLabel-root': {
                       fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
@@ -408,7 +375,7 @@ const Register: React.FC = () => {
                   label="Department"
                   name="department"
                   value={formData.department}
-                  onChange={handleInputChange}
+                  onChange={handleChange}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -426,12 +393,6 @@ const Register: React.FC = () => {
                       borderRadius: 2,
                       fontSize: isDesktop ? '1.25rem' : isLaptop ? '1.1rem' : '1rem',
                       height: isDesktop ? '60px' : isLaptop ? '56px' : '48px',
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: 'primary.main',
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderWidth: 2,
-                      },
                     },
                     '& .MuiInputLabel-root': {
                       fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
@@ -451,12 +412,9 @@ const Register: React.FC = () => {
                   textTransform: 'none',
                   fontSize: isDesktop ? '1.25rem' : isLaptop ? '1.1rem' : '1rem',
                   height: isDesktop ? '60px' : isLaptop ? '56px' : '48px',
-                  background: 'linear-gradient(45deg, #1976d2 30%, #2196f3 90%)',
-                  boxShadow: '0 3px 5px 2px rgba(33, 150, 243, .3)',
                   '&:hover': {
                     transform: 'translateY(-2px)',
                     transition: 'transform 0.2s ease-in-out',
-                    background: 'linear-gradient(45deg, #1565c0 30%, #1e88e5 90%)',
                   },
                 }}
               >
@@ -484,8 +442,6 @@ const Register: React.FC = () => {
                   sx={{ 
                     textTransform: 'none',
                     fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
-                    color: 'primary.main',
-                    fontWeight: 600,
                     '&:hover': {
                       textDecoration: 'underline',
                     },

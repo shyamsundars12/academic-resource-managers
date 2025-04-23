@@ -5,18 +5,18 @@ import {
   Container,
   Typography,
   Button,
-  Grid,
+  // Grid,
   Card,
   CardContent,
-  CardActions,
+  // CardActions,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   TextField,
   IconButton,
-  Menu,
-  MenuItem,
+  // Menu,
+  // MenuItem,
   List,
   ListItem,
   ListItemText,
@@ -31,7 +31,7 @@ import {
 } from '@mui/material';
 import {
   Add as AddIcon,
-  MoreVert as MoreVertIcon,
+  // MoreVert as MoreVertIcon,
   Upload as UploadIcon,
   Delete as DeleteIcon,
   GetApp as DownloadIcon,
@@ -39,10 +39,8 @@ import {
   School as SchoolIcon,
   Book as BookIcon,
   ContentCopy as ContentCopyIcon,
-  Logout as LogoutIcon,
 } from '@mui/icons-material';
 import axios from 'axios';
-import { useTheme, useMediaQuery } from '@mui/material/styles';
 
 interface Classroom {
   id: string;
@@ -81,7 +79,7 @@ const TeacherDashboard: React.FC = () => {
   const [newClassroom, setNewClassroom] = useState({ name: '', description: '' });
   const [newCourse, setNewCourse] = useState({ name: '', description: '' });
   const [newMaterial, setNewMaterial] = useState({ title: '', description: '', file: null as File | null });
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [downloadingMaterial, setDownloadingMaterial] = useState<string | null>(null);
   const [deletingMaterial, setDeletingMaterial] = useState<string | null>(null);
   const [openDeleteCourseDialog, setOpenDeleteCourseDialog] = useState(false);
@@ -93,10 +91,6 @@ const TeacherDashboard: React.FC = () => {
     message: '',
     severity: 'success',
   });
-
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'));
-  const isLaptop = useMediaQuery(theme.breakpoints.up('md'));
 
   useEffect(() => {
     fetchClassrooms();
@@ -512,8 +506,6 @@ const TeacherDashboard: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('username');
     navigate('/login');
   };
 
@@ -805,52 +797,6 @@ const TeacherDashboard: React.FC = () => {
     </>
   );
 
-  const LogoutButton = () => {
-    const navigate = useNavigate();
-    const theme = useTheme();
-    const isDesktop = useMediaQuery(theme.breakpoints.up('lg'));
-    const isLaptop = useMediaQuery(theme.breakpoints.up('md'));
-
-    const handleLogout = () => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userRole');
-      localStorage.removeItem('username');
-      navigate('/login');
-    };
-
-    return (
-      <Button
-        variant="contained"
-        color="error"
-        onClick={handleLogout}
-        startIcon={<LogoutIcon />}
-        sx={{
-          borderRadius: 2,
-          py: isDesktop ? 1.5 : isLaptop ? 1.25 : 1,
-          px: isDesktop ? 3 : isLaptop ? 2.5 : 2,
-          textTransform: 'none',
-          fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
-          height: isDesktop ? '48px' : isLaptop ? '44px' : '40px',
-          background: 'linear-gradient(45deg, #d32f2f 30%, #f44336 90%)',
-          boxShadow: '0 3px 5px 2px rgba(244, 67, 54, .3)',
-          '&:hover': {
-            transform: 'translateY(-2px)',
-            transition: 'transform 0.2s ease-in-out',
-            background: 'linear-gradient(45deg, #b71c1c 30%, #d32f2f 90%)',
-          },
-          '& .MuiButton-startIcon': {
-            marginRight: isDesktop ? 1 : isLaptop ? 0.75 : 0.5,
-            '& > *:first-of-type': {
-              fontSize: isDesktop ? '1.5rem' : isLaptop ? '1.25rem' : '1.1rem',
-            },
-          },
-        }}
-      >
-        Logout
-      </Button>
-    );
-  };
-
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
@@ -1045,7 +991,14 @@ const TeacherDashboard: React.FC = () => {
         </Dialog>
 
         {/* Logout Button */}
-        <LogoutButton />
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={handleLogout}
+          sx={{ position: 'absolute', top: 16, right: 16 }}
+        >
+          Logout
+        </Button>
 
         {/* Snackbar for notifications */}
         <Snackbar

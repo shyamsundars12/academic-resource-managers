@@ -47,7 +47,12 @@ export const authService = {
     email: string;
     role: string;
     fullName: string;
-  }) => api.post('/auth/register', data),
+    department?: string;
+    studentId?: string;
+  }) => {
+    const endpoint = data.role === 'STUDENT' ? '/register/student' : '/register/teacher';
+    return api.post(endpoint, data);
+  },
 };
 
 // Student services
@@ -61,6 +66,14 @@ export const studentService = {
     api.get(`/student/materials/${materialId}/download`, {
       responseType: 'blob',
     }),
+  joinClassroom: async (classroomCode: string) => {
+    try {
+      const response = await api.post(`/student/classroom/join/${classroomCode}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 // Teacher services

@@ -7,6 +7,7 @@ import {
   Button,
   Typography,
   Paper,
+  // Grid,
   Link,
   InputAdornment,
   IconButton,
@@ -39,15 +40,16 @@ const Login: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
+    
     try {
       const response = await authService.login({ username, password });
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('userRole', response.data.role.toLowerCase());
         localStorage.setItem('username', username);
-
-        switch (response.data.role.toLowerCase()) {
+        
+        // Redirect based on role
+        switch(response.data.role.toLowerCase()) {
           case 'student':
             navigate('/student');
             break;
@@ -76,29 +78,17 @@ const Login: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         bgcolor: 'background.default',
-        width: '100%',
         py: isDesktop ? 8 : isLaptop ? 6 : 4,
+        px: isDesktop ? 4 : isLaptop ? 3 : 2,
       }}
     >
-      <Container
-        maxWidth="md"
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          mx: 'auto',
-          px: 2,
-        }}
-      >
+      <Container maxWidth={isDesktop ? 'sm' : 'xs'}>
         <Paper
           elevation={3}
           sx={{
             p: isDesktop ? 6 : isLaptop ? 5 : 4,
             borderRadius: 2,
             background: 'linear-gradient(145deg, #ffffff, #f0f0f0)',
-            width: '100%',
-            maxWidth: 500,
-            mx: 'auto',
           }}
         >
           <Box sx={{ textAlign: 'center', mb: isDesktop ? 6 : isLaptop ? 5 : 4 }}>
@@ -109,21 +99,15 @@ const Login: React.FC = () => {
                 mb: isDesktop ? 3 : isLaptop ? 2.5 : 2,
               }}
             />
-            <Typography
-              variant={isDesktop ? 'h3' : isLaptop ? 'h4' : 'h5'}
-              component="h1"
+            <Typography 
+              variant={isDesktop ? 'h3' : isLaptop ? 'h4' : 'h5'} 
+              component="h1" 
               gutterBottom
-              sx={{
-                fontWeight: 600,
-                background: 'linear-gradient(45deg, #1976d2 30%, #2196f3 90%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
             >
               Welcome Back
             </Typography>
-            <Typography
-              variant={isDesktop ? 'h6' : isLaptop ? 'subtitle1' : 'body1'}
+            <Typography 
+              variant={isDesktop ? 'h6' : isLaptop ? 'subtitle1' : 'body1'} 
               color="text.secondary"
             >
               Sign in to access your account
@@ -131,14 +115,14 @@ const Login: React.FC = () => {
           </Box>
 
           {error && (
-            <Alert
-              severity="error"
-              sx={{
-                mb: isDesktop ? 4 : isLaptop ? 3 : 2,
+            <Alert 
+              severity="error" 
+              sx={{ 
+                mb: isDesktop ? 4 : isLaptop ? 3 : 2, 
                 borderRadius: 2,
                 '& .MuiAlert-icon': {
                   fontSize: isDesktop ? '2rem' : isLaptop ? '1.75rem' : '1.5rem',
-                },
+                }
               }}
             >
               {error}
@@ -146,13 +130,7 @@ const Login: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: isDesktop ? 4 : isLaptop ? 3 : 2,
-              }}
-            >
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: isDesktop ? 4 : isLaptop ? 3 : 2 }}>
               <TextField
                 fullWidth
                 label="Username"
@@ -163,11 +141,11 @@ const Login: React.FC = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <EmailIcon
-                        color="primary"
-                        sx={{
-                          fontSize: isDesktop ? '2rem' : isLaptop ? '1.75rem' : '1.5rem',
-                        }}
+                      <EmailIcon 
+                        color="primary" 
+                        sx={{ 
+                          fontSize: isDesktop ? '2rem' : isLaptop ? '1.75rem' : '1.5rem' 
+                        }} 
                       />
                     </InputAdornment>
                   ),
@@ -177,12 +155,6 @@ const Login: React.FC = () => {
                     borderRadius: 2,
                     fontSize: isDesktop ? '1.25rem' : isLaptop ? '1.1rem' : '1rem',
                     height: isDesktop ? '60px' : isLaptop ? '56px' : '48px',
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'primary.main',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderWidth: 2,
-                    },
                   },
                   '& .MuiInputLabel-root': {
                     fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
@@ -200,11 +172,11 @@ const Login: React.FC = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <LockIcon
-                        color="primary"
-                        sx={{
-                          fontSize: isDesktop ? '2rem' : isLaptop ? '1.75rem' : '1.5rem',
-                        }}
+                      <LockIcon 
+                        color="primary" 
+                        sx={{ 
+                          fontSize: isDesktop ? '2rem' : isLaptop ? '1.75rem' : '1.5rem' 
+                        }} 
                       />
                     </InputAdornment>
                   ),
@@ -225,12 +197,6 @@ const Login: React.FC = () => {
                     borderRadius: 2,
                     fontSize: isDesktop ? '1.25rem' : isLaptop ? '1.1rem' : '1rem',
                     height: isDesktop ? '60px' : isLaptop ? '56px' : '48px',
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'primary.main',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderWidth: 2,
-                    },
                   },
                   '& .MuiInputLabel-root': {
                     fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
@@ -249,25 +215,22 @@ const Login: React.FC = () => {
                   textTransform: 'none',
                   fontSize: isDesktop ? '1.25rem' : isLaptop ? '1.1rem' : '1rem',
                   height: isDesktop ? '60px' : isLaptop ? '56px' : '48px',
-                  background: 'linear-gradient(45deg, #1976d2 30%, #2196f3 90%)',
-                  boxShadow: '0 3px 5px 2px rgba(33, 150, 243, .3)',
                   '&:hover': {
                     transform: 'translateY(-2px)',
                     transition: 'transform 0.2s ease-in-out',
-                    background: 'linear-gradient(45deg, #1565c0 30%, #1e88e5 90%)',
                   },
                 }}
               >
                 {loading ? (
-                  <CircularProgress
-                    size={isDesktop ? 30 : isLaptop ? 26 : 24}
-                    color="inherit"
+                  <CircularProgress 
+                    size={isDesktop ? 30 : isLaptop ? 26 : 24} 
+                    color="inherit" 
                   />
                 ) : (
                   'Sign In'
                 )}
               </Button>
-              <Typography
+              <Typography 
                 align="center"
                 sx={{
                   fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
@@ -279,11 +242,9 @@ const Login: React.FC = () => {
                   component="button"
                   variant="body2"
                   onClick={() => navigate('/register')}
-                  sx={{
+                  sx={{ 
                     textDecoration: 'none',
                     fontSize: isDesktop ? '1.1rem' : isLaptop ? '1rem' : '0.9rem',
-                    color: 'primary.main',
-                    fontWeight: 600,
                     '&:hover': {
                       textDecoration: 'underline',
                     },
@@ -300,4 +261,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Login; 

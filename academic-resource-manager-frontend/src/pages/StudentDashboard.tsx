@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
-  Container,
+  // Container,
   Typography,
   Grid,
   CircularProgress,
@@ -18,6 +18,12 @@ import {
   Paper,
   useTheme,
   useMediaQuery,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
 } from '@mui/material';
 import {
   Class as ClassIcon,
@@ -25,6 +31,7 @@ import {
   Download as DownloadIcon,
   Home as HomeIcon,
   School as SchoolIcon,
+  Add as AddIcon,
 } from '@mui/icons-material';
 import Layout from '../components/Layout';
 import Card from '../components/Card';
@@ -61,6 +68,9 @@ const StudentDashboard: React.FC = () => {
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [joinDialogOpen, setJoinDialogOpen] = useState(false);
+  const [classroomCode, setClassroomCode] = useState('');
+  const [joinError, setJoinError] = useState('');
 
   useEffect(() => {
     fetchClassrooms();
@@ -120,6 +130,27 @@ const StudentDashboard: React.FC = () => {
     }
   };
 
+  const handleJoinClassroom = async () => {
+    if (!classroomCode.trim()) {
+      setJoinError('Please enter a classroom code');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setJoinError('');
+      await studentService.joinClassroom(classroomCode);
+      setJoinDialogOpen(false);
+      setClassroomCode('');
+      fetchClassrooms(); // Refresh the classrooms list
+    } catch (err: any) {
+      console.error('Error joining classroom:', err);
+      setJoinError(err.response?.data || 'Failed to join classroom. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderClassroomView = () => (
     <Box sx={{ 
       maxWidth: isDesktop ? 1600 : 1200, 
@@ -147,6 +178,35 @@ const StudentDashboard: React.FC = () => {
           Select a classroom to view available courses
         </Typography>
       </Box>
+
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        mb: isDesktop ? 6 : isLaptop ? 4 : 3 
+      }}>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={() => setJoinDialogOpen(true)}
+          size={isDesktop ? 'large' : 'medium'}
+          sx={{
+            borderRadius: 2,
+            px: isDesktop ? 4 : 3,
+            py: isDesktop ? 1.5 : 1,
+            fontSize: isDesktop ? '1.1rem' : '1rem',
+            textTransform: 'none',
+            boxShadow: 3,
+            '&:hover': {
+              transform: 'translateY(-2px)',
+              transition: 'transform 0.2s ease-in-out',
+            },
+          }}
+        >
+          Join Classroom
+        </Button>
+      </Box>
+
       <Grid container spacing={isDesktop ? 6 : isLaptop ? 4 : 3}>
         {classrooms.map((classroom) => (
           <Grid 
@@ -175,6 +235,92 @@ const StudentDashboard: React.FC = () => {
           </Grid>
         ))}
       </Grid>
+
+      <Dialog 
+        open={joinDialogOpen} 
+        onClose={() => setJoinDialogOpen(false)}
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            p: isDesktop ? 3 : 2,
+            maxWidth: isDesktop ? 500 : 400,
+            width: '100%',
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          textAlign: 'center',
+          fontSize: isDesktop ? '1.75rem' : '1.5rem',
+          fontWeight: 'bold',
+          pb: 2
+        }}>
+          Join Classroom
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Classroom Code"
+            type="text"
+            fullWidth
+            value={classroomCode}
+            onChange={(e) => setClassroomCode(e.target.value)}
+            error={!!joinError}
+            helperText={joinError}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
+                fontSize: isDesktop ? '1.1rem' : '1rem',
+              },
+              '& .MuiInputLabel-root': {
+                fontSize: isDesktop ? '1.1rem' : '1rem',
+              },
+            }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ 
+          px: isDesktop ? 3 : 2,
+          pb: isDesktop ? 3 : 2,
+          justifyContent: 'center'
+        }}>
+          <Button 
+            onClick={() => setJoinDialogOpen(false)}
+            sx={{
+              borderRadius: 2,
+              px: isDesktop ? 3 : 2,
+              py: isDesktop ? 1 : 0.75,
+              fontSize: isDesktop ? '1.1rem' : '1rem',
+              textTransform: 'none',
+              mr: 2,
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleJoinClassroom}
+            variant="contained"
+            disabled={loading}
+            sx={{
+              borderRadius: 2,
+              px: isDesktop ? 3 : 2,
+              py: isDesktop ? 1 : 0.75,
+              fontSize: isDesktop ? '1.1rem' : '1rem',
+              textTransform: 'none',
+              boxShadow: 3,
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                transition: 'transform 0.2s ease-in-out',
+              },
+            }}
+          >
+            {loading ? (
+              <CircularProgress size={isDesktop ? 24 : 20} color="inherit" />
+            ) : (
+              'Join'
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 

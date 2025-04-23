@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error").permitAll() // Allow error handling
                         .requestMatchers("/api/auth/**").permitAll() // Open auth routes
-                        .requestMatchers("/api/users/register/**").permitAll() // Open registration routes
+                        .requestMatchers("/api/register/**").permitAll() // Open registration routes
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN") // Admin routes
                         .requestMatchers("/api/teacher/**").hasAuthority("ROLE_TEACHER") // Teacher-specific routes
                         .requestMatchers("/api/student/**").hasAuthority("ROLE_STUDENT") // Student-specific routes

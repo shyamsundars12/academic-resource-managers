@@ -12,10 +12,10 @@ import {
   TableRow,
   Button,
   Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  // Dialog,
+  // DialogTitle,
+  // DialogContent,
+  // DialogActions,
   Alert,
 } from '@mui/material';
 import axios from 'axios';
@@ -33,8 +33,8 @@ interface RegistrationRequest {
 
 const AdminDashboard: React.FC = () => {
   const [requests, setRequests] = useState<RegistrationRequest[]>([]);
-  const [selectedRequest, setSelectedRequest] = useState<RegistrationRequest | null>(null);
-  const [openDialog, setOpenDialog] = useState(false);
+  // const [selectedRequest, setSelectedRequest] = useState<RegistrationRequest | null>(null);
+  // const [openDialog, setOpenDialog] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
