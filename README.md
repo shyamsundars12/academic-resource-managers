@@ -88,7 +88,7 @@ Use **Postman** or **Thunder Client** to test the following endpoints:
 
 ### 1. Clone the repo
 
-git clone https://github.com/yourusername/academic-resource-managers.git
+git clone https://github.com/shyamsundar12/academic-resource-managers.git
 cd academic-resource-managers
 2. Add your Google Drive credentials
 Place your credentials.json inside:
