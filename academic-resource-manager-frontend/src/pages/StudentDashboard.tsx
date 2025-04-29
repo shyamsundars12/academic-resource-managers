@@ -115,8 +115,17 @@ const StudentDashboard: React.FC = () => {
   };
 
   const handleDownloadMaterial = async (material: Material) => {
+    if (!selectedClassroom?.id || !selectedCourse?.id) {
+      setError('No classroom or course selected');
+      return;
+    }
+
     try {
-      const response = await studentService.downloadMaterial(material.id);
+      const response = await studentService.downloadMaterial(
+        selectedClassroom.id,
+        selectedCourse.id,
+        material.id
+      );
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;

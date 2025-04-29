@@ -1,5 +1,14 @@
 package org.example.academicresourcemanager.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.example.academicresourcemanager.model.Classroom;
 import org.example.academicresourcemanager.model.Course;
 import org.example.academicresourcemanager.model.Material;
@@ -8,24 +17,15 @@ import org.example.academicresourcemanager.repository.ClassroomRepository;
 import org.example.academicresourcemanager.repository.CourseRepository;
 import org.example.academicresourcemanager.repository.MaterialRepository;
 import org.example.academicresourcemanager.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-import java.util.ArrayList;
 
 @Service
 public class TeacherService {
@@ -53,6 +53,18 @@ public class TeacherService {
         this.classroomRepository = classroomRepository;
         this.courseRepository = courseRepository;
         this.materialRepository = materialRepository;
+        
+        // Ensure uploads directory exists
+        try {
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                logger.info("Creating uploads directory at: {}", uploadPath.toAbsolutePath());
+                Files.createDirectories(uploadPath);
+            }
+        } catch (IOException e) {
+            logger.error("Failed to create uploads directory: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to initialize uploads directory", e);
+        }
     }
 
     public Classroom createClassroom(Classroom classroom) {
@@ -151,8 +163,18 @@ public class TeacherService {
         try {
             String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
             Path filePath = Paths.get(uploadDir, fileName);
+            
+            // Ensure parent directory exists
             Files.createDirectories(filePath.getParent());
-            Files.copy(file.getInputStream(), filePath);
+            
+            // Copy file with proper error handling
+            try {
+                Files.copy(file.getInputStream(), filePath);
+                logger.info("Successfully uploaded file to: {}", filePath.toAbsolutePath());
+            } catch (IOException e) {
+                logger.error("Failed to copy file to {}: {}", filePath, e.getMessage(), e);
+                throw new RuntimeException("Failed to save file: " + e.getMessage(), e);
+            }
 
             Material material = new Material();
             material.setTitle(title);
@@ -163,9 +185,12 @@ public class TeacherService {
             material.setUploadedBy(teacherId);
             material.setUploadDate(LocalDateTime.now());
 
-            return materialRepository.save(material);
+            Material savedMaterial = materialRepository.save(material);
+            logger.info("Saved material record with ID: {}", savedMaterial.getId());
+            return savedMaterial;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to upload file", e);
+            logger.error("Failed to upload material: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to upload file: " + e.getMessage(), e);
         }
     }
 

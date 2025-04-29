@@ -62,8 +62,8 @@ export const studentService = {
     api.get(`/student/classroom/${classroomId}/courses`),
   getCourseMaterials: (classroomId: string, courseId: string) =>
     api.get(`/student/classroom/${classroomId}/course/${courseId}/materials`),
-  downloadMaterial: (materialId: string) =>
-    api.get(`/student/materials/${materialId}/download`, {
+  downloadMaterial: (classroomId: string, courseId: string, materialId: string) =>
+    api.get(`/student/classroom/${classroomId}/course/${courseId}/material/${materialId}/download`, {
       responseType: 'blob',
     }),
   joinClassroom: async (classroomCode: string) => {
