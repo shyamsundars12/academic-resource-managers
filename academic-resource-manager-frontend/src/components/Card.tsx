@@ -42,42 +42,71 @@ const Card: React.FC<CardProps> = ({
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        borderRadius: 2,
-        boxShadow: 3,
-        transition: 'transform 0.2s, box-shadow 0.2s',
+        borderRadius: 3,
+        boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.05)',
+        transition: 'all 0.3s ease-in-out',
+        border: '1px solid rgba(0, 0, 0, 0.05)',
         '&:hover': {
           transform: 'translateY(-4px)',
-          boxShadow: 6,
+          boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)',
+          borderColor: 'primary.main',
         },
       }}
     >
-      <CardContent sx={{ flexGrow: 1 }}>
+      <CardContent sx={{ flexGrow: 1, p: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           {icon && (
             <Avatar
               sx={{
                 bgcolor: `${iconColor}.main`,
                 mr: 2,
-                width: 40,
-                height: 40,
+                width: 48,
+                height: 48,
+                transition: 'transform 0.3s ease-in-out',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                },
               }}
             >
               {icon}
             </Avatar>
           )}
           <Box>
-            <Typography variant="h6" component="h2">
+            <Typography 
+              variant="h6" 
+              component="h2"
+              sx={{
+                fontWeight: 600,
+                letterSpacing: '-0.025em',
+                color: 'text.primary',
+              }}
+            >
               {title}
             </Typography>
             {subtitle && (
-              <Typography variant="body2" color="text.secondary">
+              <Typography 
+                variant="body2" 
+                color="text.secondary"
+                sx={{
+                  mt: 0.5,
+                  fontWeight: 500,
+                }}
+              >
                 {subtitle}
               </Typography>
             )}
           </Box>
         </Box>
         {description && (
-          <Typography variant="body2" color="text.secondary" paragraph>
+          <Typography 
+            variant="body2" 
+            color="text.secondary" 
+            paragraph
+            sx={{
+              lineHeight: 1.6,
+              mt: 2,
+            }}
+          >
             {description}
           </Typography>
         )}
@@ -90,6 +119,14 @@ const Card: React.FC<CardProps> = ({
                 color={chip.color}
                 variant="outlined"
                 size="small"
+                sx={{
+                  borderRadius: 1,
+                  borderWidth: '1px',
+                  '&:hover': {
+                    backgroundColor: `${chip.color}.main`,
+                    color: 'white',
+                  },
+                }}
               />
             ))}
           </Box>
@@ -97,13 +134,24 @@ const Card: React.FC<CardProps> = ({
         {children}
       </CardContent>
       {action && (
-        <CardActions sx={{ p: 2 }}>
+        <CardActions sx={{ p: 3, pt: 0 }}>
           <Button
             fullWidth
             variant="contained"
             color={action.color}
             startIcon={action.icon}
             onClick={action.onClick}
+            sx={{
+              py: 1.5,
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+              boxShadow: 'none',
+              '&:hover': {
+                boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                transform: 'translateY(-1px)',
+              },
+            }}
           >
             {action.label}
           </Button>

@@ -5,18 +5,14 @@ import {
   Container,
   Typography,
   Button,
-  // Grid,
   Card,
   CardContent,
-  // CardActions,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   TextField,
   IconButton,
-  // Menu,
-  // MenuItem,
   List,
   ListItem,
   ListItemText,
@@ -28,10 +24,15 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Fade,
+  Zoom,
+  Grow,
+  useTheme,
+  useMediaQuery,
+  Grid,
 } from '@mui/material';
 import {
   Add as AddIcon,
-  // MoreVert as MoreVertIcon,
   Upload as UploadIcon,
   Delete as DeleteIcon,
   GetApp as DownloadIcon,
@@ -68,6 +69,9 @@ interface Material {
 }
 
 const TeacherDashboard: React.FC = () => {
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'));
+  const isLaptop = useMediaQuery(theme.breakpoints.up('md'));
   const navigate = useNavigate();
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(null);
@@ -79,7 +83,6 @@ const TeacherDashboard: React.FC = () => {
   const [newClassroom, setNewClassroom] = useState({ name: '', description: '' });
   const [newCourse, setNewCourse] = useState({ name: '', description: '' });
   const [newMaterial, setNewMaterial] = useState({ title: '', description: '', file: null as File | null });
-  // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [downloadingMaterial, setDownloadingMaterial] = useState<string | null>(null);
   const [deletingMaterial, setDeletingMaterial] = useState<string | null>(null);
   const [openDeleteCourseDialog, setOpenDeleteCourseDialog] = useState(false);
@@ -531,27 +534,131 @@ const TeacherDashboard: React.FC = () => {
   };
 
   const renderClassroomView = () => (
-    <>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" component="h1">
+    <Fade in timeout={500}>
+      <Box sx={{ 
+        width: '100%',
+        minHeight: '100vh',
+        p: { xs: 2, sm: 3, md: 4 },
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        position: 'relative',
+        overflow: 'auto',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at top right, rgba(37, 99, 235, 0.1) 0%, transparent 50%)',
+          zIndex: 0,
+        },
+      }}>
+        <Box sx={{ 
+          position: 'relative',
+          zIndex: 1,
+          maxWidth: 1600,
+          mx: 'auto',
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            mb: { xs: 4, sm: 6, md: 8 },
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: { xs: 2, sm: 0 },
+            animation: 'fadeIn 1s ease-in-out',
+            '@keyframes fadeIn': {
+              '0%': { opacity: 0, transform: 'translateY(-20px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' },
+            },
+          }}>
+            <Typography 
+              variant="h3"
+              component="h1"
+              sx={{
+                fontWeight: 700,
+                background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+              }}
+            >
           My Classrooms
         </Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => setOpenClassroomDialog(true)}
+              sx={{
+                borderRadius: 2,
+                px: { xs: 3, sm: 4 },
+                py: { xs: 1, sm: 1.5 },
+                fontSize: { xs: '1rem', sm: '1.1rem' },
+                textTransform: 'none',
+                background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #1d4ed8 30%, #6d28d9 90%)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                },
+              }}
         >
           Create Classroom
         </Button>
       </Box>
 
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-        {classrooms.map((classroom) => (
-          <Box key={classroom.id} sx={{ width: { xs: '100%', md: 'calc(50% - 12px)' } }}>
-            <Card>
+          <Grid 
+            container 
+            spacing={{ xs: 2, sm: 3, md: 4 }}
+            sx={{
+              '& > .MuiGrid-item': {
+                animation: 'fadeIn 0.5s ease-in-out',
+                animationFillMode: 'both',
+              },
+            }}
+          >
+            {classrooms.map((classroom, index) => (
+              <Grid 
+                item 
+                xs={12} 
+                md={6} 
+                key={classroom.id}
+                sx={{
+                  animationDelay: `${index * 0.1}s`,
+                }}
+              >
+                <Card
+                  sx={{
+                    height: '100%',
+                    borderRadius: 2,
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    transition: 'transform 0.3s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-5px)',
+                    },
+                  }}
+                >
               <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="h6">{classroom.name}</Typography>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      mb: 2,
+                    }}>
+                      <Typography 
+                        variant="h5" 
+                        sx={{
+                          fontWeight: 600,
+                          background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                        }}
+                      >
+                        {classroom.name}
+                      </Typography>
                   <IconButton
                     onClick={() => {
                       setClassroomToDelete(classroom);
@@ -559,31 +666,61 @@ const TeacherDashboard: React.FC = () => {
                     }}
                     title="Delete Classroom"
                     color="error"
+                        sx={{
+                          '&:hover': {
+                            transform: 'scale(1.1)',
+                          },
+                        }}
                   >
                     <DeleteIcon />
                   </IconButton>
                 </Box>
-                <Typography color="textSecondary">{classroom.description}</Typography>
-                
-                <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography 
+                      color="text.secondary"
+                      sx={{ mb: 2 }}
+                    >
+                      {classroom.description}
+                    </Typography>
+                    
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 1,
+                      mb: 2,
+                    }}>
                   <Typography variant="subtitle2">Classroom Code:</Typography>
                   <Chip
                     label={classroom.classroomCode}
                     color="primary"
                     size="small"
-                    sx={{ fontWeight: 'bold' }}
+                        sx={{ 
+                          fontWeight: 'bold',
+                          background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
+                        }}
                   />
                   <IconButton
                     size="small"
                     onClick={() => handleCopyClassroomCode(classroom.classroomCode)}
                     title="Copy classroom code"
+                        sx={{
+                          '&:hover': {
+                            transform: 'scale(1.1)',
+                          },
+                        }}
                   >
                     <ContentCopyIcon fontSize="small" />
                   </IconButton>
                 </Box>
 
                 <Divider sx={{ my: 2 }} />
-                <Typography variant="subtitle1" gutterBottom>
+                    <Typography 
+                      variant="h6" 
+                      gutterBottom
+                      sx={{
+                        fontWeight: 600,
+                        mb: 2,
+                      }}
+                    >
                   Courses
                 </Typography>
                 <List>
@@ -592,16 +729,22 @@ const TeacherDashboard: React.FC = () => {
                       key={course.id}
                       onClick={() => handleCourseClick(classroom, course)}
                       sx={{
-                        width: '100%',
-                        textAlign: 'left',
+                            borderRadius: 1,
+                            mb: 1,
                         cursor: 'pointer',
+                            transition: 'all 0.3s ease-in-out',
                         '&:hover': {
                           backgroundColor: 'action.hover',
+                              transform: 'translateX(5px)',
                         },
                       }}
                     >
                       <ListItemText
-                        primary={course.name}
+                            primary={
+                              <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+                                {course.name}
+                              </Typography>
+                            }
                         secondary={course.description}
                       />
                       <Chip
@@ -609,6 +752,11 @@ const TeacherDashboard: React.FC = () => {
                         size="small"
                         color="primary"
                         variant="outlined"
+                            sx={{
+                              background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                            }}
                       />
                       <IconButton
                         edge="end"
@@ -633,16 +781,251 @@ const TeacherDashboard: React.FC = () => {
                     setSelectedClassroom(classroom);
                     setOpenCourseDialog(true);
                   }}
-                  sx={{ mt: 2 }}
+                      sx={{ 
+                        mt: 2,
+                        borderRadius: 2,
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                        },
+                      }}
                 >
                   Add Course
                 </Button>
               </CardContent>
             </Card>
-          </Box>
+              </Grid>
         ))}
+          </Grid>
       </Box>
-    </>
+
+        {/* Create Classroom Dialog */}
+        <Dialog open={openClassroomDialog} onClose={() => setOpenClassroomDialog(false)}>
+          <DialogTitle>Create New Classroom</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Classroom Name"
+              fullWidth
+              value={newClassroom.name}
+              onChange={(e) => setNewClassroom({ ...newClassroom, name: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              label="Description"
+              fullWidth
+              multiline
+              rows={4}
+              value={newClassroom.description}
+              onChange={(e) => setNewClassroom({ ...newClassroom, description: e.target.value })}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenClassroomDialog(false)}>Cancel</Button>
+            <Button onClick={handleCreateClassroom} variant="contained">
+              Create
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Create Course Dialog */}
+        <Dialog open={openCourseDialog} onClose={() => setOpenCourseDialog(false)}>
+          <DialogTitle>Create New Course</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Course Name"
+              fullWidth
+              value={newCourse.name}
+              onChange={(e) => setNewCourse({ ...newCourse, name: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              label="Description"
+              fullWidth
+              multiline
+              rows={4}
+              value={newCourse.description}
+              onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenCourseDialog(false)}>Cancel</Button>
+            <Button onClick={handleCreateCourse} variant="contained">
+              Create
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Upload Material Dialog */}
+        <Dialog open={openMaterialDialog} onClose={() => setOpenMaterialDialog(false)}>
+          <DialogTitle>Upload New Material</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Title"
+              fullWidth
+              required
+              value={newMaterial.title}
+              onChange={(e) => setNewMaterial({ ...newMaterial, title: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              label="Description"
+              fullWidth
+              multiline
+              rows={4}
+              required
+              value={newMaterial.description}
+              onChange={(e) => setNewMaterial({ ...newMaterial, description: e.target.value })}
+            />
+            <Button
+              variant="outlined"
+              component="label"
+              startIcon={<UploadIcon />}
+              sx={{ mt: 2 }}
+            >
+              Upload File
+              <input
+                type="file"
+                hidden
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setNewMaterial({ ...newMaterial, file: e.target.files[0] });
+                  }
+                }}
+              />
+            </Button>
+            {newMaterial.file && (
+              <Box sx={{ mt: 1 }}>
+                <Typography variant="body2">
+                  Selected file: {newMaterial.file.name}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Size: {(newMaterial.file.size / 1024 / 1024).toFixed(2)} MB
+                </Typography>
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenMaterialDialog(false)}>Cancel</Button>
+            <Button 
+              onClick={handleUploadMaterial} 
+              variant="contained"
+              disabled={!newMaterial.title || !newMaterial.description || !newMaterial.file}
+            >
+              Upload
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Delete Course Dialog */}
+        <Dialog
+          open={openDeleteCourseDialog}
+          onClose={() => {
+            setOpenDeleteCourseDialog(false);
+            setCourseToDelete(null);
+          }}
+        >
+          <DialogTitle>Delete Course</DialogTitle>
+          <DialogContent>
+            <Typography>
+              Are you sure you want to delete the course "{courseToDelete?.course.name}"?
+              This action cannot be undone and will also delete all materials associated with this course.
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => {
+              setOpenDeleteCourseDialog(false);
+              setCourseToDelete(null);
+            }}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => courseToDelete && handleDeleteCourse(courseToDelete.classroom, courseToDelete.course)}
+              color="error"
+              variant="contained"
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Delete Classroom Dialog */}
+        <Dialog
+          open={openDeleteClassroomDialog}
+          onClose={() => {
+            setOpenDeleteClassroomDialog(false);
+            setClassroomToDelete(null);
+          }}
+        >
+          <DialogTitle>Delete Classroom</DialogTitle>
+          <DialogContent>
+            <Typography>
+              Are you sure you want to delete the classroom "{classroomToDelete?.name}"?
+              This action cannot be undone and will also delete all courses and materials in this classroom.
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => {
+              setOpenDeleteClassroomDialog(false);
+              setClassroomToDelete(null);
+            }}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => classroomToDelete && handleDeleteClassroom(classroomToDelete)}
+              color="error"
+              variant="contained"
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Logout Button */}
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={handleLogout}
+          sx={{ 
+            position: 'fixed',
+            top: { xs: 16, sm: 24 },
+            right: { xs: 16, sm: 24 },
+            borderRadius: 2,
+            '&:hover': {
+              transform: 'translateY(-2px)',
+            },
+          }}
+        >
+          Logout
+        </Button>
+
+        {/* Snackbar */}
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          TransitionComponent={Fade}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbar.severity}
+            sx={{ 
+              width: '100%',
+              borderRadius: 2,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+      </Box>
+    </Fade>
   );
 
   const renderCourseView = () => (
@@ -798,8 +1181,32 @@ const TeacherDashboard: React.FC = () => {
   );
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ mt: 4, mb: 4 }}>
+    <Container 
+      maxWidth={false} 
+      sx={{ 
+        p: 0,
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        position: 'relative',
+        overflow: 'auto',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at top right, rgba(37, 99, 235, 0.1) 0%, transparent 50%)',
+          zIndex: 0,
+        },
+      }}
+    >
+      <Box sx={{ 
+        position: 'relative',
+        zIndex: 1,
+        minHeight: '100vh',
+        p: { xs: 2, sm: 3, md: 4 },
+      }}>
         {viewMode === 'classrooms' ? renderClassroomView() : renderCourseView()}
 
         {/* Create Classroom Dialog */}
@@ -995,22 +1402,35 @@ const TeacherDashboard: React.FC = () => {
           variant="outlined"
           color="error"
           onClick={handleLogout}
-          sx={{ position: 'absolute', top: 16, right: 16 }}
+          sx={{ 
+            position: 'fixed',
+            top: { xs: 16, sm: 24 },
+            right: { xs: 16, sm: 24 },
+            borderRadius: 2,
+            '&:hover': {
+              transform: 'translateY(-2px)',
+            },
+          }}
         >
           Logout
         </Button>
 
-        {/* Snackbar for notifications */}
+        {/* Snackbar */}
         <Snackbar
           open={snackbar.open}
           autoHideDuration={3000}
           onClose={handleCloseSnackbar}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          TransitionComponent={Fade}
         >
           <Alert
             onClose={handleCloseSnackbar}
             severity={snackbar.severity}
-            sx={{ width: '100%' }}
+            sx={{ 
+              width: '100%',
+              borderRadius: 2,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            }}
           >
             {snackbar.message}
           </Alert>

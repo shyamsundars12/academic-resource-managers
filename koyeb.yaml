@@ -1,0 +1,28 @@
+name: academic-resource-manager
+services:
+  - name: backend
+    image: koyeb/academic-resource-manager
+    ports:
+      - port: 8080
+        protocol: http
+    env:
+      - key: MONGODB_URI
+        value: ${MONGODB_URI}
+      - key: JWT_SECRET
+        value: ${JWT_SECRET}
+      - key: JWT_EXPIRATION
+        value: ${JWT_EXPIRATION}
+      - key: GOOGLE_DRIVE_CREDENTIALS_PATH
+        value: ${GOOGLE_DRIVE_CREDENTIALS_PATH}
+      - key: GOOGLE_DRIVE_FOLDER_ID
+        value: ${GOOGLE_DRIVE_FOLDER_ID}
+      - key: FILE_UPLOAD_DIR
+        value: ${FILE_UPLOAD_DIR}
+    regions:
+      - fra
+    instance:
+      type: nano
+      count: 1
+    scaling:
+      min: 1
+      max: 1 

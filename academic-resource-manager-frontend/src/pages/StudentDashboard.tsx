@@ -24,6 +24,9 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Fade,
+  Zoom,
+  Grow,
 } from '@mui/material';
 import {
   Class as ClassIcon,
@@ -161,176 +164,237 @@ const StudentDashboard: React.FC = () => {
   };
 
   const renderClassroomView = () => (
-    <Box sx={{ 
-      maxWidth: isDesktop ? 1600 : 1200, 
-      mx: 'auto', 
-      px: isDesktop ? 6 : isLaptop ? 4 : 3,
-      py: isDesktop ? 4 : 3
-    }}>
+    <Fade in timeout={500}>
       <Box sx={{ 
-        textAlign: 'center', 
-        mb: isDesktop ? 8 : isLaptop ? 6 : 4,
-        maxWidth: 800,
-        mx: 'auto'
+        width: '100%',
+        minHeight: '100vh',
+        p: { xs: 2, sm: 3, md: 4 },
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        position: 'relative',
+        overflow: 'auto',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at top right, rgba(37, 99, 235, 0.1) 0%, transparent 50%)',
+          zIndex: 0,
+        },
       }}>
-        <Typography 
-          variant={isDesktop ? 'h3' : isLaptop ? 'h4' : 'h5'} 
-          component="h1" 
-          gutterBottom
-        >
-          Welcome to Your Dashboard
-        </Typography>
-        <Typography 
-          variant={isDesktop ? 'h6' : 'subtitle1'} 
-          color="text.secondary"
-        >
-          Select a classroom to view available courses
-        </Typography>
-      </Box>
-
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        mb: isDesktop ? 6 : isLaptop ? 4 : 3 
-      }}>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={() => setJoinDialogOpen(true)}
-          size={isDesktop ? 'large' : 'medium'}
-          sx={{
-            borderRadius: 2,
-            px: isDesktop ? 4 : 3,
-            py: isDesktop ? 1.5 : 1,
-            fontSize: isDesktop ? '1.1rem' : '1rem',
-            textTransform: 'none',
-            boxShadow: 3,
-            '&:hover': {
-              transform: 'translateY(-2px)',
-              transition: 'transform 0.2s ease-in-out',
+        <Box sx={{ 
+          position: 'relative',
+          zIndex: 1,
+          maxWidth: 1600,
+          mx: 'auto',
+        }}>
+          <Box sx={{ 
+            textAlign: 'center', 
+            mb: { xs: 4, sm: 6, md: 8 },
+            animation: 'fadeIn 1s ease-in-out',
+            '@keyframes fadeIn': {
+              '0%': { opacity: 0, transform: 'translateY(-20px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' },
             },
+          }}>
+            <Typography 
+              variant="h3"
+              component="h1" 
+              sx={{
+                fontWeight: 700,
+                mb: 2,
+                background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+              }}
+            >
+              Welcome to Your Dashboard
+            </Typography>
+            <Typography 
+              variant="h6" 
+              color="text.secondary"
+              sx={{ 
+                fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
+                maxWidth: 800,
+                mx: 'auto',
+              }}
+            >
+              Select a classroom to view available courses
+            </Typography>
+          </Box>
+
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            mb: { xs: 4, sm: 6, md: 8 },
+            animation: 'slideIn 0.5s ease-out',
+            '@keyframes slideIn': {
+              '0%': { transform: 'translateY(20px)', opacity: 0 },
+              '100%': { transform: 'translateY(0)', opacity: 1 },
+            },
+          }}>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={() => setJoinDialogOpen(true)}
+              size="large"
+              sx={{
+                borderRadius: 2,
+                px: { xs: 3, sm: 4 },
+                py: { xs: 1, sm: 1.5 },
+                fontSize: { xs: '1rem', sm: '1.1rem' },
+                textTransform: 'none',
+                background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #1d4ed8 30%, #6d28d9 90%)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                },
+              }}
+            >
+              Join Classroom
+            </Button>
+          </Box>
+
+          <Grid 
+            container 
+            spacing={{ xs: 2, sm: 3, md: 4 }}
+            sx={{
+              '& > .MuiGrid-item': {
+                animation: 'fadeIn 0.5s ease-in-out',
+                animationFillMode: 'both',
+              },
+            }}
+          >
+            {classrooms.map((classroom, index) => (
+              <Grid 
+                item 
+                xs={12} 
+                sm={6} 
+                md={4} 
+                lg={3} 
+                key={classroom.id}
+                sx={{
+                  animationDelay: `${index * 0.1}s`,
+                }}
+              >
+                <Card
+                  title={classroom.name}
+                  subtitle={`Code: ${classroom.code}`}
+                  icon={<ClassIcon />}
+                  iconColor="primary"
+                  chips={[
+                    { label: `${classroom.courses.length} Courses`, color: 'primary' },
+                  ]}
+                  action={{
+                    label: 'View Courses',
+                    onClick: () => setSelectedClassroom(classroom),
+                    icon: <BookIcon />,
+                    color: 'primary',
+                  }}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+
+        <Dialog 
+          open={joinDialogOpen} 
+          onClose={() => setJoinDialogOpen(false)}
+          PaperProps={{
+            sx: {
+              borderRadius: 2,
+              p: { xs: 2, sm: 3 },
+              maxWidth: { xs: '90%', sm: 500 },
+              width: '100%',
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            }
           }}
         >
-          Join Classroom
-        </Button>
-      </Box>
-
-      <Grid container spacing={isDesktop ? 6 : isLaptop ? 4 : 3}>
-        {classrooms.map((classroom) => (
-          <Grid 
-            item 
-            xs={12} 
-            sm={6} 
-            md={4} 
-            lg={3} 
-            key={classroom.id}
-          >
-            <Card
-              title={classroom.name}
-              subtitle={`Code: ${classroom.code}`}
-              icon={<ClassIcon />}
-              iconColor="primary"
-              chips={[
-                { label: `${classroom.courses.length} Courses`, color: 'primary' },
-              ]}
-              action={{
-                label: 'View Courses',
-                onClick: () => setSelectedClassroom(classroom),
-                icon: <BookIcon />,
-                color: 'primary',
+          <DialogTitle sx={{ 
+            textAlign: 'center',
+            fontSize: { xs: '1.5rem', sm: '1.75rem' },
+            fontWeight: 'bold',
+            pb: 2,
+            background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}>
+            Join Classroom
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Classroom Code"
+              type="text"
+              fullWidth
+              value={classroomCode}
+              onChange={(e) => setClassroomCode(e.target.value)}
+              error={!!joinError}
+              helperText={joinError}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  '&:hover fieldset': {
+                    borderColor: 'primary.main',
+                  },
+                },
               }}
             />
-          </Grid>
-        ))}
-      </Grid>
-
-      <Dialog 
-        open={joinDialogOpen} 
-        onClose={() => setJoinDialogOpen(false)}
-        PaperProps={{
-          sx: {
-            borderRadius: 2,
-            p: isDesktop ? 3 : 2,
-            maxWidth: isDesktop ? 500 : 400,
-            width: '100%',
-          }
-        }}
-      >
-        <DialogTitle sx={{ 
-          textAlign: 'center',
-          fontSize: isDesktop ? '1.75rem' : '1.5rem',
-          fontWeight: 'bold',
-          pb: 2
-        }}>
-          Join Classroom
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Classroom Code"
-            type="text"
-            fullWidth
-            value={classroomCode}
-            onChange={(e) => setClassroomCode(e.target.value)}
-            error={!!joinError}
-            helperText={joinError}
-            sx={{
-              '& .MuiOutlinedInput-root': {
+          </DialogContent>
+          <DialogActions sx={{ 
+            px: { xs: 2, sm: 3 },
+            pb: { xs: 2, sm: 3 },
+            justifyContent: 'center'
+          }}>
+            <Button 
+              onClick={() => setJoinDialogOpen(false)}
+              sx={{
                 borderRadius: 2,
-                fontSize: isDesktop ? '1.1rem' : '1rem',
-              },
-              '& .MuiInputLabel-root': {
-                fontSize: isDesktop ? '1.1rem' : '1rem',
-              },
-            }}
-          />
-        </DialogContent>
-        <DialogActions sx={{ 
-          px: isDesktop ? 3 : 2,
-          pb: isDesktop ? 3 : 2,
-          justifyContent: 'center'
-        }}>
-          <Button 
-            onClick={() => setJoinDialogOpen(false)}
-            sx={{
-              borderRadius: 2,
-              px: isDesktop ? 3 : 2,
-              py: isDesktop ? 1 : 0.75,
-              fontSize: isDesktop ? '1.1rem' : '1rem',
-              textTransform: 'none',
-              mr: 2,
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleJoinClassroom}
-            variant="contained"
-            disabled={loading}
-            sx={{
-              borderRadius: 2,
-              px: isDesktop ? 3 : 2,
-              py: isDesktop ? 1 : 0.75,
-              fontSize: isDesktop ? '1.1rem' : '1rem',
-              textTransform: 'none',
-              boxShadow: 3,
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                transition: 'transform 0.2s ease-in-out',
-              },
-            }}
-          >
-            {loading ? (
-              <CircularProgress size={isDesktop ? 24 : 20} color="inherit" />
-            ) : (
-              'Join'
-            )}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+                px: { xs: 2, sm: 3 },
+                py: { xs: 1, sm: 1.5 },
+                fontSize: { xs: '0.9rem', sm: '1rem' },
+                textTransform: 'none',
+                mr: 2,
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleJoinClassroom}
+              variant="contained"
+              disabled={loading}
+              sx={{
+                borderRadius: 2,
+                px: { xs: 2, sm: 3 },
+                py: { xs: 1, sm: 1.5 },
+                fontSize: { xs: '0.9rem', sm: '1rem' },
+                textTransform: 'none',
+                background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #1d4ed8 30%, #6d28d9 90%)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                },
+              }}
+            >
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                'Join'
+              )}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
+    </Fade>
   );
 
   const renderCourseView = () => (
@@ -535,9 +599,10 @@ const StudentDashboard: React.FC = () => {
           sx={{ 
             mb: 3, 
             borderRadius: 2,
-            maxWidth: isDesktop ? 1600 : 1200,
+            maxWidth: 1600,
             mx: 'auto',
-            px: isDesktop ? 6 : isLaptop ? 4 : 3
+            px: { xs: 2, sm: 3, md: 4 },
+            animation: 'slideIn 0.5s ease-out',
           }}
         >
           {error}
@@ -547,9 +612,20 @@ const StudentDashboard: React.FC = () => {
         <Box sx={{ 
           display: 'flex', 
           justifyContent: 'center', 
-          mt: isDesktop ? 8 : isLaptop ? 6 : 4 
+          alignItems: 'center',
+          minHeight: '100vh',
         }}>
-          <CircularProgress size={isDesktop ? 60 : isLaptop ? 48 : 40} />
+          <CircularProgress 
+            size={isDesktop ? 60 : isLaptop ? 48 : 40} 
+            sx={{
+              color: 'primary.main',
+              animation: 'spin 1s linear infinite',
+              '@keyframes spin': {
+                '0%': { transform: 'rotate(0deg)' },
+                '100%': { transform: 'rotate(360deg)' },
+              },
+            }}
+          />
         </Box>
       ) : selectedCourse ? (
         renderMaterialView()
