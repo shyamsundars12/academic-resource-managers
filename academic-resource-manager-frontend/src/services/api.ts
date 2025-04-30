@@ -102,6 +102,9 @@ export const adminService = {
     fullName: string;
   }) => api.post('/admin/users', data),
   deleteUser: (userId: string) => api.delete(`/admin/users/${userId}`),
+  getPendingUsers: () => api.get('/admin/pending-users'),
+  approveUser: (userId: string) => api.put(`/admin/users/${userId}/approve`),
+  rejectUser: (userId: string) => api.put(`/admin/users/${userId}/reject`),
 };
 
 export default api; 

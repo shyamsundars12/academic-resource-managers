@@ -92,7 +92,7 @@ public class UserService {
         user.setFullName(request.getFullName());
         user.setStudentId(request.getStudentId());
         user.setRole(Role.STUDENT);
-        user.setStatus(UserStatus.ACTIVE);
+        user.setStatus(UserStatus.PENDING);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
@@ -116,7 +116,7 @@ public class UserService {
         user.setFullName(request.getFullName());
         user.setDepartment(request.getDepartment());
         user.setRole(Role.TEACHER);
-        user.setStatus(UserStatus.ACTIVE);
+        user.setStatus(UserStatus.PENDING);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 

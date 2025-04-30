@@ -1,7 +1,8 @@
 package org.example.academicresourcemanager.controller;
 
-import org.example.academicresourcemanager.dto.UserResponse;
-import org.example.academicresourcemanager.service.AdminService;
+import org.example.academicresourcemanager.model.User;
+import org.example.academicresourcemanager.model.UserStatus;
+import org.example.academicresourcemanager.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,27 +14,35 @@ import java.util.List;
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminController {
 
-    private final AdminService adminService;
+    private final UserRepository userRepository;
 
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
+    public AdminController(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/pending-users")
-    public ResponseEntity<List<UserResponse>> getPendingUsers() {
-        List<UserResponse> users = adminService.getPendingUsers();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<User>> getPendingUsers() {
+        List<User> pendingUsers = userRepository.findByStatus(UserStatus.PENDING);
+        return ResponseEntity.ok(pendingUsers);
     }
 
-    @PostMapping("/approve/{userId}")
-    public ResponseEntity<UserResponse> approveUser(@PathVariable String userId) {
-        UserResponse response = adminService.approveUser(userId);
-        return ResponseEntity.ok(response);
+    @PutMapping("/users/{userId}/approve")
+    public ResponseEntity<User> approveUser(@PathVariable String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        user.setStatus(UserStatus.ACTIVE);
+        User updatedUser = userRepository.save(user);
+        return ResponseEntity.ok(updatedUser);
     }
 
-    @PostMapping("/reject/{userId}")
-    public ResponseEntity<UserResponse> rejectUser(@PathVariable String userId) {
-        UserResponse response = adminService.rejectUser(userId);
-        return ResponseEntity.ok(response);
+    @PutMapping("/users/{userId}/reject")
+    public ResponseEntity<User> rejectUser(@PathVariable String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        user.setStatus(UserStatus.INACTIVE);
+        User updatedUser = userRepository.save(user);
+        return ResponseEntity.ok(updatedUser);
     }
 }

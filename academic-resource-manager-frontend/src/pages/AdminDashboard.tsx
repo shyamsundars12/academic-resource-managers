@@ -1,186 +1,176 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Container,
   Typography,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Paper,
   Button,
-  Chip,
-  // Dialog,
-  // DialogTitle,
-  // DialogContent,
-  // DialogActions,
+  CircularProgress,
   Alert,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
-import axios from 'axios';
+import { adminService } from '../services/api';
+import Layout from '../components/Layout';
 
-interface RegistrationRequest {
-  _id: string;
+interface User {
+  id: string;
   username: string;
   email: string;
   fullName: string;
   role: string;
-  department: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: string;
   createdAt: string;
 }
 
 const AdminDashboard: React.FC = () => {
-  const [requests, setRequests] = useState<RegistrationRequest[]>([]);
-  // const [selectedRequest, setSelectedRequest] = useState<RegistrationRequest | null>(null);
-  // const [openDialog, setOpenDialog] = useState(false);
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'));
+  const isLaptop = useMediaQuery(theme.breakpoints.up('md'));
+  
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [processing, setProcessing] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchRequests();
+    fetchPendingUsers();
   }, []);
 
-  const fetchRequests = async () => {
+  const fetchPendingUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/admin/pending-users', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setRequests(response.data);
+      setLoading(true);
+      const response = await adminService.getPendingUsers();
+      setUsers(response.data);
     } catch (err) {
-      setError('Failed to fetch registration requests');
-      console.error('Error fetching requests:', err);
+      setError('Failed to fetch pending users');
+      console.error('Error fetching users:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleApprove = async (requestId: string) => {
+  const handleApprove = async (userId: string) => {
     try {
-      await axios.post(
-        `http://localhost:8080/api/admin/approve/${requestId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-      setSuccess('Request approved successfully');
-      fetchRequests();
+      setProcessing(userId);
+      await adminService.approveUser(userId);
+      setUsers(users.filter(user => user.id !== userId));
     } catch (err) {
-      setError('Failed to approve request');
-      console.error('Error approving request:', err);
+      setError('Failed to approve user');
+      console.error('Error approving user:', err);
+    } finally {
+      setProcessing(null);
     }
   };
 
-  const handleReject = async (requestId: string) => {
+  const handleReject = async (userId: string) => {
     try {
-      await axios.post(
-        `http://localhost:8080/api/admin/reject/${requestId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-      setSuccess('Request rejected successfully');
-      fetchRequests();
+      setProcessing(userId);
+      await adminService.rejectUser(userId);
+      setUsers(users.filter(user => user.id !== userId));
     } catch (err) {
-      setError('Failed to reject request');
-      console.error('Error rejecting request:', err);
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'warning';
-      case 'approved':
-        return 'success';
-      case 'rejected':
-        return 'error';
-      default:
-        return 'default';
+      setError('Failed to reject user');
+      console.error('Error rejecting user:', err);
+    } finally {
+      setProcessing(null);
     }
   };
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Registration Requests
+    <Layout>
+      <Box sx={{ 
+        maxWidth: isDesktop ? 1600 : 1200, 
+        mx: 'auto', 
+        px: isDesktop ? 6 : isLaptop ? 4 : 3,
+        py: isDesktop ? 4 : 3
+      }}>
+        <Typography 
+          variant={isDesktop ? 'h3' : isLaptop ? 'h4' : 'h5'} 
+          component="h1" 
+          gutterBottom
+          sx={{ mb: isDesktop ? 6 : isLaptop ? 4 : 3 }}
+        >
+          Pending User Approvals
         </Typography>
 
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 3 }}>
             {error}
           </Alert>
         )}
 
-        {success && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {success}
-          </Alert>
-        )}
-
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Department</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {requests.map((request) => (
-                <TableRow key={request._id}>
-                  <TableCell>{request.fullName}</TableCell>
-                  <TableCell>{request.email}</TableCell>
-                  <TableCell>{request.role}</TableCell>
-                  <TableCell>{request.department}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={request.status}
-                      color={getStatusColor(request.status)}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {new Date(request.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    {request.status === 'pending' && (
-                      <>
-                        <Button
-                          color="success"
-                          onClick={() => handleApprove(request._id)}
-                          sx={{ mr: 1 }}
-                        >
-                          Approve
-                        </Button>
-                        <Button
-                          color="error"
-                          onClick={() => handleReject(request._id)}
-                        >
-                          Reject
-                        </Button>
-                      </>
-                    )}
-                  </TableCell>
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <CircularProgress size={isDesktop ? 60 : isLaptop ? 48 : 40} />
+          </Box>
+        ) : (
+          <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 3 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Username</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Full Name</TableCell>
+                  <TableCell>Role</TableCell>
+                  <TableCell>Registration Date</TableCell>
+                  <TableCell align="right">Actions</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {users.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell>{user.username}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.fullName}</TableCell>
+                    <TableCell>{user.role}</TableCell>
+                    <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell align="right">
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleApprove(user.id)}
+                        disabled={processing === user.id}
+                        sx={{ mr: 1 }}
+                      >
+                        {processing === user.id ? (
+                          <CircularProgress size={24} color="inherit" />
+                        ) : (
+                          'Approve'
+                        )}
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleReject(user.id)}
+                        disabled={processing === user.id}
+                      >
+                        {processing === user.id ? (
+                          <CircularProgress size={24} color="inherit" />
+                        ) : (
+                          'Reject'
+                        )}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {users.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      No pending users to approve
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Box>
-    </Container>
+    </Layout>
   );
 };
 

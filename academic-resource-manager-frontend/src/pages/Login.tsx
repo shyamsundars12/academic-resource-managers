@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -35,6 +35,14 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check for registration success message
+  React.useEffect(() => {
+    if (location.state?.message) {
+      setError(location.state.message);
+    }
+  }, [location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +72,12 @@ const Login: React.FC = () => {
         }
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid username or password');
+      // Handle specific error messages from the backend
+      if (err.response?.data?.message?.includes('not yet approved')) {
+        setError('Your account is pending approval. Please wait for admin approval before logging in.');
+      } else {
+        setError(err.response?.data?.message || 'Invalid username or password');
+      }
     } finally {
       setLoading(false);
     }
@@ -116,7 +129,7 @@ const Login: React.FC = () => {
 
           {error && (
             <Alert 
-              severity="error" 
+              severity={error.includes('successful') ? 'success' : 'error'} 
               sx={{ 
                 mb: isDesktop ? 4 : isLaptop ? 3 : 2, 
                 borderRadius: 2,

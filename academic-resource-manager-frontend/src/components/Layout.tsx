@@ -17,6 +17,7 @@ import {
   Notifications as NotificationsIcon,
   Logout as LogoutIcon,
   Person as PersonIcon,
+  Dashboard as DashboardIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -49,6 +50,17 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
   const handleProfile = () => {
     handleClose();
     // Navigate to profile page when implemented
+  };
+
+  const handleDashboard = () => {
+    handleClose();
+    if (userRole === 'admin') {
+      navigate('/admin');
+    } else if (userRole === 'teacher') {
+      navigate('/teacher');
+    } else if (userRole === 'student') {
+      navigate('/student');
+    }
   };
 
   return (
@@ -93,6 +105,9 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
+              <MenuItem onClick={handleDashboard}>
+                <DashboardIcon sx={{ mr: 1 }} /> Dashboard
+              </MenuItem>
               <MenuItem onClick={handleProfile}>
                 <PersonIcon sx={{ mr: 1 }} /> Profile
               </MenuItem>

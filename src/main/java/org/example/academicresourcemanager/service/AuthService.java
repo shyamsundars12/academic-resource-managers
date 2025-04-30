@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.example.academicresourcemanager.model.UserStatus;
 
 @Service
 public class AuthService {
@@ -28,6 +29,14 @@ public class AuthService {
     }
 
     public JwtResponse authenticateUser(LoginRequest loginRequest) {
+        // First check if user exists and is approved
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new RuntimeException("Your account is not yet approved. Please wait for admin approval.");
+        }
+
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginRequest.getUsername(),
@@ -37,9 +46,6 @@ public class AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtService.generateToken((UserDetails) authentication.getPrincipal());
-
-        User user = userRepository.findByUsername(loginRequest.getUsername())
-            .orElseThrow(() -> new RuntimeException("User not found"));
 
         return new JwtResponse(jwt, user.getUsername(), user.getRole().name());
     }
