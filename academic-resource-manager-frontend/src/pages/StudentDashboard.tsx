@@ -183,24 +183,24 @@ const StudentDashboard: React.FC = () => {
           zIndex: 0,
         },
       }}>
-        <Box sx={{ 
+    <Box sx={{ 
           position: 'relative',
           zIndex: 1,
           maxWidth: 1600,
-          mx: 'auto',
-        }}>
-          <Box sx={{ 
-            textAlign: 'center', 
+      mx: 'auto', 
+    }}>
+      <Box sx={{ 
+        textAlign: 'center', 
             mb: { xs: 4, sm: 6, md: 8 },
             animation: 'fadeIn 1s ease-in-out',
             '@keyframes fadeIn': {
               '0%': { opacity: 0, transform: 'translateY(-20px)' },
               '100%': { opacity: 1, transform: 'translateY(0)' },
             },
-          }}>
-            <Typography 
+      }}>
+        <Typography 
               variant="h3"
-              component="h1" 
+          component="h1" 
               sx={{
                 fontWeight: 700,
                 mb: 2,
@@ -209,55 +209,55 @@ const StudentDashboard: React.FC = () => {
                 WebkitTextFillColor: 'transparent',
                 fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
               }}
-            >
-              Welcome to Your Dashboard
-            </Typography>
-            <Typography 
+        >
+          Welcome to Your Dashboard
+        </Typography>
+        <Typography 
               variant="h6" 
-              color="text.secondary"
+          color="text.secondary"
               sx={{ 
                 fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
                 maxWidth: 800,
                 mx: 'auto',
               }}
-            >
-              Select a classroom to view available courses
-            </Typography>
-          </Box>
+        >
+          Select a classroom to view available courses
+        </Typography>
+      </Box>
 
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
             mb: { xs: 4, sm: 6, md: 8 },
             animation: 'slideIn 0.5s ease-out',
             '@keyframes slideIn': {
               '0%': { transform: 'translateY(20px)', opacity: 0 },
               '100%': { transform: 'translateY(0)', opacity: 1 },
             },
-          }}>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={() => setJoinDialogOpen(true)}
+      }}>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={() => setJoinDialogOpen(true)}
               size="large"
-              sx={{
-                borderRadius: 2,
+          sx={{
+            borderRadius: 2,
                 px: { xs: 3, sm: 4 },
                 py: { xs: 1, sm: 1.5 },
                 fontSize: { xs: '1rem', sm: '1.1rem' },
-                textTransform: 'none',
+            textTransform: 'none',
                 background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
-                '&:hover': {
+            '&:hover': {
                   background: 'linear-gradient(45deg, #1d4ed8 30%, #6d28d9 90%)',
-                  transform: 'translateY(-2px)',
+              transform: 'translateY(-2px)',
                   boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
-                },
-              }}
-            >
-              Join Classroom
-            </Button>
-          </Box>
+            },
+          }}
+        >
+          Join Classroom
+        </Button>
+      </Box>
 
           <Grid 
             container 
@@ -270,130 +270,130 @@ const StudentDashboard: React.FC = () => {
             }}
           >
             {classrooms.map((classroom, index) => (
-              <Grid 
-                item 
-                xs={12} 
-                sm={6} 
-                md={4} 
-                lg={3} 
-                key={classroom.id}
+          <Grid 
+            item 
+            xs={12} 
+            sm={6} 
+            md={4} 
+            lg={3} 
+            key={classroom.id}
                 sx={{
                   animationDelay: `${index * 0.1}s`,
                 }}
-              >
-                <Card
-                  title={classroom.name}
-                  subtitle={`Code: ${classroom.code}`}
-                  icon={<ClassIcon />}
-                  iconColor="primary"
-                  chips={[
-                    { label: `${classroom.courses.length} Courses`, color: 'primary' },
-                  ]}
-                  action={{
-                    label: 'View Courses',
-                    onClick: () => setSelectedClassroom(classroom),
-                    icon: <BookIcon />,
-                    color: 'primary',
-                  }}
-                />
-              </Grid>
-            ))}
+          >
+            <Card
+              title={classroom.name}
+              subtitle={`Code: ${classroom.code}`}
+              icon={<ClassIcon />}
+              iconColor="primary"
+              chips={[
+                { label: `${classroom.courses.length} Courses`, color: 'primary' },
+              ]}
+              action={{
+                label: 'View Courses',
+                onClick: () => setSelectedClassroom(classroom),
+                icon: <BookIcon />,
+                color: 'primary',
+              }}
+            />
           </Grid>
+        ))}
+      </Grid>
         </Box>
 
-        <Dialog 
-          open={joinDialogOpen} 
-          onClose={() => setJoinDialogOpen(false)}
-          PaperProps={{
-            sx: {
-              borderRadius: 2,
+      <Dialog 
+        open={joinDialogOpen} 
+        onClose={() => setJoinDialogOpen(false)}
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
               p: { xs: 2, sm: 3 },
               maxWidth: { xs: '90%', sm: 500 },
-              width: '100%',
+            width: '100%',
               background: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(10px)',
               border: '1px solid rgba(255, 255, 255, 0.2)',
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            }
-          }}
-        >
-          <DialogTitle sx={{ 
-            textAlign: 'center',
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          textAlign: 'center',
             fontSize: { xs: '1.5rem', sm: '1.75rem' },
-            fontWeight: 'bold',
+          fontWeight: 'bold',
             pb: 2,
             background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-          }}>
-            Join Classroom
-          </DialogTitle>
-          <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Classroom Code"
-              type="text"
-              fullWidth
-              value={classroomCode}
-              onChange={(e) => setClassroomCode(e.target.value)}
-              error={!!joinError}
-              helperText={joinError}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
+        }}>
+          Join Classroom
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Classroom Code"
+            type="text"
+            fullWidth
+            value={classroomCode}
+            onChange={(e) => setClassroomCode(e.target.value)}
+            error={!!joinError}
+            helperText={joinError}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
                   '&:hover fieldset': {
                     borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </DialogContent>
-          <DialogActions sx={{ 
+              },
+              },
+            }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ 
             px: { xs: 2, sm: 3 },
             pb: { xs: 2, sm: 3 },
-            justifyContent: 'center'
-          }}>
-            <Button 
-              onClick={() => setJoinDialogOpen(false)}
-              sx={{
-                borderRadius: 2,
+          justifyContent: 'center'
+        }}>
+          <Button 
+            onClick={() => setJoinDialogOpen(false)}
+            sx={{
+              borderRadius: 2,
                 px: { xs: 2, sm: 3 },
                 py: { xs: 1, sm: 1.5 },
                 fontSize: { xs: '0.9rem', sm: '1rem' },
-                textTransform: 'none',
-                mr: 2,
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleJoinClassroom}
-              variant="contained"
-              disabled={loading}
-              sx={{
-                borderRadius: 2,
+              textTransform: 'none',
+              mr: 2,
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleJoinClassroom}
+            variant="contained"
+            disabled={loading}
+            sx={{
+              borderRadius: 2,
                 px: { xs: 2, sm: 3 },
                 py: { xs: 1, sm: 1.5 },
                 fontSize: { xs: '0.9rem', sm: '1rem' },
-                textTransform: 'none',
+              textTransform: 'none',
                 background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
-                '&:hover': {
+              '&:hover': {
                   background: 'linear-gradient(45deg, #1d4ed8 30%, #6d28d9 90%)',
-                  transform: 'translateY(-2px)',
+                transform: 'translateY(-2px)',
                   boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
-                },
-              }}
-            >
-              {loading ? (
+              },
+            }}
+          >
+            {loading ? (
                 <CircularProgress size={24} color="inherit" />
-              ) : (
-                'Join'
-              )}
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
+            ) : (
+              'Join'
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
     </Fade>
   );
 

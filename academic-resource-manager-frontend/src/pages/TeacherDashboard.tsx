@@ -25,8 +25,8 @@ import {
   Snackbar,
   Alert,
   Fade,
-  Zoom,
-  Grow,
+  // Zoom,
+  // Grow,
   useTheme,
   useMediaQuery,
   Grid,
@@ -681,7 +681,7 @@ const TeacherDashboard: React.FC = () => {
                     >
                       {classroom.description}
                     </Typography>
-                    
+                
                     <Box sx={{ 
                       display: 'flex', 
                       alignItems: 'center', 

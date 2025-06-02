@@ -161,14 +161,14 @@ const Login: React.FC = () => {
               <SchoolIcon
                 sx={{
                   fontSize: { md: 180, lg: 200 },
-                  color: 'primary.main',
+                color: 'primary.main',
                   mb: 3,
                   filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))',
-                }}
-              />
-              <Typography
+              }}
+            />
+            <Typography 
                 variant="h3"
-                component="h1"
+              component="h1" 
                 sx={{
                   fontWeight: 700,
                   mb: 2,
@@ -233,140 +233,140 @@ const Login: React.FC = () => {
                     WebkitTextFillColor: 'transparent',
                     fontSize: { xs: '1.75rem', sm: '2rem', md: '2.25rem' },
                   }}
-                >
-                  Welcome Back
-                </Typography>
-                <Typography 
+            >
+              Welcome Back
+            </Typography>
+            <Typography 
                   variant="body1" 
-                  color="text.secondary"
+              color="text.secondary"
                   sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}
-                >
-                  Sign in to access your account
-                </Typography>
-              </Box>
+            >
+              Sign in to access your account
+            </Typography>
+          </Box>
 
-              {error && (
-                <Alert
-                  severity={error.includes('successful') ? 'success' : 'error'}
-                  sx={{
+          {error && (
+            <Alert 
+              severity={error.includes('successful') ? 'success' : 'error'} 
+              sx={{ 
                     mb: 3,
-                    borderRadius: 2,
-                    '& .MuiAlert-icon': {
+                borderRadius: 2,
+                '& .MuiAlert-icon': {
                       fontSize: '1.5rem',
                     },
-                  }}
-                >
-                  {error}
-                </Alert>
-              )}
+              }}
+            >
+              {error}
+            </Alert>
+          )}
 
-              <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  <TextField
-                    fullWidth
-                    label="Username"
-                    variant="outlined"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
+              <TextField
+                fullWidth
+                label="Username"
+                variant="outlined"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
                           <EmailIcon color="primary" />
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
                         '&:hover fieldset': {
                           borderColor: 'primary.main',
-                        },
-                      },
-                    }}
-                  />
-                  <TextField
-                    fullWidth
-                    label="Password"
-                    type={showPassword ? 'text' : 'password'}
-                    variant="outlined"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
+                  },
+                  },
+                }}
+              />
+              <TextField
+                fullWidth
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                variant="outlined"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
                           <LockIcon color="primary" />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => setShowPassword(!showPassword)}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
                         '&:hover fieldset': {
                           borderColor: 'primary.main',
-                        },
-                      },
-                    }}
-                  />
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    type="submit"
-                    size="large"
-                    disabled={loading}
-                    sx={{
-                      borderRadius: 2,
+                  },
+                  },
+                }}
+              />
+              <Button
+                fullWidth
+                variant="contained"
+                type="submit"
+                size="large"
+                disabled={loading}
+                sx={{
+                  borderRadius: 2,
                       py: 1.5,
-                      textTransform: 'none',
+                  textTransform: 'none',
                       fontWeight: 600,
                       fontSize: '1.1rem',
                       background: 'linear-gradient(45deg, #2563eb 30%, #7c3aed 90%)',
-                      '&:hover': {
+                  '&:hover': {
                         background: 'linear-gradient(45deg, #1d4ed8 30%, #6d28d9 90%)',
-                        transform: 'translateY(-2px)',
+                    transform: 'translateY(-2px)',
                         boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
-                      },
-                    }}
-                  >
-                    {loading ? (
+                  },
+                }}
+              >
+                {loading ? (
                       <CircularProgress size={24} color="inherit" />
-                    ) : (
-                      'Sign In'
-                    )}
-                  </Button>
-                  <Typography
-                    align="center"
+                ) : (
+                  'Sign In'
+                )}
+              </Button>
+              <Typography 
+                align="center"
                     sx={{ mt: 2 }}
-                  >
-                    Don't have an account?{' '}
-                    <Link
+              >
+                Don't have an account?{' '}
+                <Link
                       href="/register"
-                      sx={{
+                  sx={{ 
                         color: 'primary.main',
-                        textDecoration: 'none',
+                    textDecoration: 'none',
                         fontWeight: 600,
-                        '&:hover': {
-                          textDecoration: 'underline',
-                        },
-                      }}
-                    >
-                      Register here
-                    </Link>
-                  </Typography>
-                </Box>
-              </form>
-            </Paper>
+                    '&:hover': {
+                      textDecoration: 'underline',
+                    },
+                  }}
+                >
+                  Register here
+                </Link>
+              </Typography>
+            </Box>
+          </form>
+        </Paper>
           </Grid>
         </Grid>
       </Container>

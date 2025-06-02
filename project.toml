@@ -1,0 +1,19 @@
+[build]
+  [[build.env]]
+    name = "BP_JVM_VERSION"
+    value = "17"
+
+  [[build.env]]
+    name = "BP_MAVEN_BUILD_ARGUMENTS"
+    value = "-Dmaven.test.skip=true package"
+
+  [[build.env]]
+    name = "BP_MAVEN_BUILT_MODULE"
+    value = "."
+
+[metadata]
+  include-files = [
+    "target/*.jar",
+    "src/main/resources/application.properties",
+    "src/main/resources/credentials.json"
+  ] 
